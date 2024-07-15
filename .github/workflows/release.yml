@@ -1,0 +1,50 @@
+name: Package and Release .devcontainer
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: true
+
+jobs:
+  package-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
+
+      - name: Create tar.gz package
+        run: tar -czvf devcontainer-${{ github.event.inputs.version }}.tar.gz .devcontainer
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Create and push Git tag
+        run: |
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
+
+      - name: Prepare Release Notes
+        run: |
+          cat << EOF > release_notes.md
+          インストールするには、\`.devcontainer\`ディレクトリを配置したいディレクトリに\`cd\`してから次のワンライナーを実行してください：
+
+          \`\`\`bash
+          curl -sL https://github.com/${{ github.repository }}/releases/download/${{ github.event.inputs.version }}/devcontainer-${{ github.event.inputs.version }}.tar.gz | tar -xzvf -
+          \`\`\`
+          EOF
+
+      - name: Create Release and Upload Asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create ${{ github.event.inputs.version }} \
+            --title "DevContainer Release ${{ github.event.inputs.version }}" \
+            --notes-file release_notes.md \
+            devcontainer-${{ github.event.inputs.version }}.tar.gz
