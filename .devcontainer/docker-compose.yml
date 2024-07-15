@@ -3,6 +3,9 @@ services:
     build:
       context: workspace
       dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID} # .envのHOST_UIDを渡す
+        HOST_GID: ${HOST_GID} # .envのHOST_GIDを渡す
     user: vscode:vscode # マウントしたファイルの所有者がroot:rootにならないようにするため
     volumes:
       - ..:/workspace:cached # ソースコードをホストと共有
