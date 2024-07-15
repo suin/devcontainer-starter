@@ -10,15 +10,15 @@ USER $USERNAME
 
 # マウントするボリュームのディレクトリを作成しておく。マウントしたときに所有者がrootになるのを防ぐため。
 RUN mkdir -p \
-			/home/vscode/.ssh \
-			/home/vscode/.config/gh \
-			/home/vscode/.local/share \
-      /home/vscode/.cache \
-			/home/vscode/.cursor-server \
-			/home/vscode/.vscode-server \
-			/home/vscode/.config/JetBrains \
-			/home/vscode/.local/share/nvim \
-    && chmod 700 /home/vscode/.ssh
+			~/.ssh \
+			~/.config/gh \
+			~/.local/share \
+      ~/.cache \
+			~/.cursor-server \
+			~/.vscode-server \
+			~/.config/JetBrains \
+			~/.local/share/nvim \
+    && chmod 700 ~/.ssh
 
 # ログインしたときにコードベースに直行できるようにしておく
 WORKDIR /workspace
