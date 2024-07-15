@@ -1,0 +1,40 @@
+services:
+  workspace:
+    build:
+      context: workspace
+      dockerfile: Dockerfile
+    user: vscode:vscode # マウントしたファイルの所有者がroot:rootにならないようにするため
+    volumes:
+      - ..:/workspace:cached # ソースコードをホストと共有
+      - ~/.ssh/authorized_keys:/home/vscode/.ssh/authorized_keys:cached # SSH公開鍵を共有することで、コンテナに安全にSSH接続しやすくする
+      - ~/.config/gh/hosts.yml:/home/vscode/.config/gh/hosts.yml:cached # ghの認証情報を共有することでコンテナ内で毎度 gh auth login する手間を省く
+      - ~/.local/share/chezmoi/:/home/vscode/.local/share/chezmoi/:cached # chezmoi の設定をホストと共有することで、chezmoi apply --init を手早く行えるようにする
+      - home-dot-cache:/home/vscode/.cache # ホームディレクトリのキャッシュを共有することで、コンテナを再起動してもキャッシュを引き継げるようにする
+      - nix:/nix # Nixストアを共有することで、コンテナを再起動してもNixストアを引き継げるようにする
+      - cursor-server:/home/vscode/.cursor-server # Cursor Serverをボリュームに残すことで、コンテナを再作成してもCursor Serverの設定を引き継げるので、Cursorの起動が早くなる
+      - vscode-server:/home/vscode/.vscode-server # VS Code Serverをボリュームに残すことで、コンテナを再作成してもVS Code Serverの設定を引き継げるので、VS Codeの起動が早くなる
+      - jetbrains-config:/home/vscode/.config/JetBrains # JetBrains IDEの設定をボリュームに残すことで、コンテナを再作成してもJetBrains IDEの設定を引き継げるので、JetBrains IDEの起動が早くなる
+      - nvim:/home/vscode/.local/share/nvim # Neovimの設定をボリュームに残すことで、コンテナを再作成してもNeovimの設定を引き継げるので、Neovimの起動が早くなる
+    command: sleep infinity # コンテナが終了しないようにする
+    ports:
+      - ${HOST_ADDR}2222:2222 # SSH
+
+volumes:
+  # ホームディレクトリのキャッシュ用のボリューム
+  home-dot-cache:
+    driver: local
+  # Nixストア用のボリューム
+  nix:
+    driver: local
+  # Cursor Server用のボリューム
+  cursor-server:
+    driver: local
+  # VS Code Server用のボリューム
+  vscode-server:
+    driver: local
+  # JetBrainsの設定用のボリューム
+  jetbrains-config:
+    driver: local
+  # Neovimの設定用のボリューム
+  nvim:
+    driver: local

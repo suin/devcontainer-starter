@@ -1,0 +1,15 @@
+{
+	"name": "My Project",
+	"dockerComposeFile": ["docker-compose.yml"],
+	"service": "workspace", // docker-compose.ymlのservice名を指定します。これがIDEからの接続先になります。
+	"features": {
+		"ghcr.io/devcontainers/features/sshd:1": {},
+		"ghcr.io/devcontainers/features/nix:1": {
+			"flakeUri": "github:nixos/nixpkgs/nixpkgs-unstable#hello"
+		},
+		"ghcr.io/devcontainers-contrib/features/curl-apt-get:1": {},
+		"ghcr.io/rio/features/chezmoi:1": {}
+	},
+	"workspaceFolder": "/workspace",
+	"forwardPorts": [2222]
+}
