@@ -122,13 +122,10 @@ ssh devcontainer
 devcontainer build --workspace-folder .
 ```
 
-## ワークスペースコンテナーの停止
-
-コンテナを停止するには以下のコマンドを使います。
+起動中のDev Containerを削除しつつ、再ビルド、再起動まで一度に行う場合は次のコマンドを実行します。
 
 ```bash
-docker ps
-docker rm -f <container-id>
+devcontainer up --workspace-folder . --remove-existing-container
 ```
 
 ## Dev Containerの削除
@@ -174,3 +171,9 @@ nix develop # など
 `.devcontainer/.env`の`HOST_ADDR`をプロジェクトごとにIPアドレスを変えることで、一応ポートの競合を回避できます。
 
 ただし、この方法は開発者個々人がIPアドレスを自由に決める裁量がないため、チーム開発には向いていない可能性があります。開発者ごとに携わっているプロジェクト数が異なる可能性があるためです。このあたりの改善は今後の課題とします。
+
+## Q&A
+
+### `vsc-{project-name}-{checksum}-uid:latest`のようなイメージが作成されるのはなぜですか？
+
+Dev Containerの仕様で、設定`updateRemoteUserUID`が有効になっているとき、ホストマシンのユーザーIDに合わせてコンテナ内のユーザーIDを変更します。この変更がイメージとして作られた結果です。

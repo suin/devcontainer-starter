@@ -2,14 +2,9 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 
 ARG USERNAME=vscode
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
 
-# ホストマシンのユーザーIDが1000なので、コンテナーのユーザーのUIDも1000にすることで、マウントしたボリュームのファイルの所有権問題を起きにくくする
-RUN userdel -r ubuntu \
-    && groupmod --gid $USER_GID $USERNAME \
-    && usermod --uid $USER_UID --gid $USER_GID $USERNAME \
-    && chown -R $USER_UID:$USER_GID /home/$USERNAME
+# ubuntuがUID=1000だが、ホスト側のユーザーがUID=1000のとき、このままだとDev Containerの設定値`updateRemoteUserUID`に関する操作が効かなくなってしまうため、ubuntuユーザーを削除しておく。
+RUN userdel -r ubuntu
 
 USER $USERNAME
 
