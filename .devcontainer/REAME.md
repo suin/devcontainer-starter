@@ -4,12 +4,13 @@
 
 ## 特徴
 
-- SSH経由でコンテナにログインできます
-- エディタの起動高速化: VS Code、JetBrains IDE、Cursor、Neovimの設定をキャッシュしているので、2回目以降の起動が高速化されます
-- [Chezmoi]がすぐ使えます
-- [Nix]がすぐ使えます
-- GitHub CLI([gh])がログイン済み状態で使い始められます
-- [Direnv]がすぐに使えます
+- SSH経由でコンテナにログインできます。
+- エディタの起動高速化: VS Code、JetBrains IDE、Cursor、Neovimの設定をキャッシュしているので、2回目以降の起動が高速化されます。
+- [Chezmoi]がすぐ使えます。
+- [Nix]がすぐ使えます。Nixで導入したツールがVS Codeでも使えます。
+- GitHub CLI([gh])がログイン済み状態で使い始められます。
+- [Direnv]がすぐに使えます。
+- `.bashrc`、`.zshrc`、`config.fish`を「チームで共通化したい」vs「個人でカスタムしたい」が両立可能です。
 
 [Chezmoi]: https://www.chezmoi.io/
 [Nix]: https://nixos.org/
