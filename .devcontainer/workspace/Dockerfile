@@ -7,28 +7,28 @@ ARG USER_GID=$USER_UID
 
 # ubuntuがUID=1000だが、ホスト側のユーザーがUID=1000のとき、このままだとDev Containerの設定値`updateRemoteUserUID`に関する操作が効かなくなってしまうため、ubuntuユーザーを削除しておく。また、`updateRemoteUserUID`の操作より先にUID, GIDを変更しておくことで、ビルド時間を2分程度短縮できる。
 RUN userdel -r ubuntu \
-    && groupmod --gid $USER_GID $USERNAME \
-    && usermod --uid $USER_UID --gid $USER_GID $USERNAME \
-    && chown -R $USER_UID:$USER_GID /home/$USERNAME
+	&& groupmod --gid $USER_GID $USERNAME \
+	&& usermod --uid $USER_UID --gid $USER_GID $USERNAME \
+	&& chown -R $USER_UID:$USER_GID /home/$USERNAME
 
 USER $USERNAME
 
 # マウントするボリュームのディレクトリを作成しておく。マウントしたときに所有者がrootになるのを防ぐため。
 RUN mkdir -p \
-			~/.ssh \
-			~/.config/gh \
-			~/.local/share \
-      ~/.cache \
-			~/.cursor-server \
-			~/.vscode-server \
-			~/.config/JetBrains \
-			~/.local/share/nvim \
-    && chmod 700 ~/.ssh
+	~/.ssh \
+	~/.config/gh \
+	~/.local/share \
+	~/.cache \
+	~/.cursor-server \
+	~/.vscode-server \
+	~/.config/JetBrains \
+	~/.local/share/nvim \
+	&& chmod 700 ~/.ssh
 
 # チームで共有する設定ファイルをコピーしておく
 COPY team.bash team.zsh team.fish /home/$USERNAME/
 RUN echo "source ~/team.bash" >> ~/.bashrc && \
-    echo "source ~/team.zsh" >> ~/.zshrc
+	echo "source ~/team.zsh" >> ~/.zshrc
 
 # ログインしたときにコードベースに直行できるようにしておく
 WORKDIR /workspace
