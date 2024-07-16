@@ -8,7 +8,8 @@
 			"flakeUri": "github:nixos/nixpkgs/nixpkgs-unstable#hello"
 		},
 		"ghcr.io/devcontainers-contrib/features/curl-apt-get:1": {},
-		"ghcr.io/rio/features/chezmoi:1": {}
+		"ghcr.io/rio/features/chezmoi:1": {},
+		"ghcr.io/devcontainers-contrib/features/direnv:1": {}
 	},
 	"workspaceFolder": "/workspace",
 	"forwardPorts": [2222]

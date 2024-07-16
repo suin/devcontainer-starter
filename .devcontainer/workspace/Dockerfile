@@ -25,5 +25,10 @@ RUN mkdir -p \
 			~/.local/share/nvim \
     && chmod 700 ~/.ssh
 
+# チームで共有する設定ファイルをコピーしておく
+COPY team.bash team.zsh team.fish /home/$USERNAME/
+RUN echo "source ~/team.bash" >> ~/.bashrc && \
+    echo "source ~/team.zsh" >> ~/.zshrc
+
 # ログインしたときにコードベースに直行できるようにしておく
 WORKDIR /workspace

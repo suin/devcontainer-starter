@@ -9,10 +9,12 @@
 - [Chezmoi]がすぐ使えます
 - [Nix]がすぐ使えます
 - GitHub CLI([gh])がログイン済み状態で使い始められます
+- [Direnv]がすぐに使えます
 
 [Chezmoi]: https://www.chezmoi.io/
 [Nix]: https://nixos.org/
 [gh]: https://cli.github.com
+[Direnv]: https://direnv.net/
 
 ## 必要なもの
 
@@ -155,6 +157,26 @@ docker compose --project-name <project-name> down --volumes --rmi all --remove-o
 
 このコマンドの詳細は[《滅びの呪文》Docker Composeで作ったコンテナ、イメージ、ボリューム、ネットワークを一括完全消去する便利コマンド #docker-compose - Qiita](https://qiita.com/suin/items/19d65e191b96a0079417)を参照してください。
 
+## チームの設定と個人向けの設定
+
+このDev Containerは、チーム開発向けの設定と個人向けの設定を両立させることを目指しています。
+
+### Bash, Zsh, Fishの設定
+
+チーム共通の設定は、
+
+- ~/team.bash
+- ~/team.zsh
+- ~/team.fish
+
+に記述します。これは、それぞれ
+
+- ~/.bashrc
+- ~/.zshrc
+- ~/.config/fish/config.fish
+
+から読み込まれることを想定しています。したがって、シェルを個人的にカスタマイズしたい場合は、これらのファイルを編集して構いませんが、チーム共通の設定を忘れずに`source`することを推奨します。
+
 ## Chezmoiの適用
 
 dotfilesを[Chezmoi]で管理している場合は、すでに`chezmoi`コマンドが使える状態になっているので、Dev Container内で以下のコマンドを実行します。
@@ -169,6 +191,13 @@ Dev Containerには`nix`コマンドがインストールされているので�
 
 ```bash
 nix develop # など
+```
+
+このDev Containerには、[Direnv]が導入済みなので、`.envrc`ファイルを使って環境変数を設定することもできます。おそらくこちらの設定のほうが、毎回`nix develop`を実行する必要がないので便利でしょう。
+
+```bash
+# /workspace/.envrc
+use flake
 ```
 
 ## 複数のプロジェクトを同時に起動したいとき
@@ -255,7 +284,7 @@ jobs:
         run: devcontainer exec --workspace-folder . echo "Hello, Dev Container!"
 ```
 
-## カスタマイズ
+## Dev Containerのカスタマイズ
 
 このDev Containerをカスタマイズする方法はいくつかあります。
 
