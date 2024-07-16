@@ -106,7 +106,14 @@ Host devcontainer
   UserKnownHostsFile /dev/null
 ```
 
+`StrictHostKeyChecking no` と `UserKnownHostsFile /dev/null` は、セキュリティ的には望ましくない設定ですが、開発環境として使うためには便利です。
+Dev Containerは日々破棄と構築が繰り返されることが前提であるため、フィンガープリントがちょくちょく変わることがあります。
+これらをセットしておかないと、`~/.ssh/known_hosts` を日々メンテナンスする必要が出てきます。
+したがって以上の設定をしておき、フィンガープリントの確認をスキップする設定にしておいたほうが、開発体験が向上します。
+
 これに加えて、SSHエージェントの転送を有効化しておくと、コンテナ内でプライベートリポジトリに対してgitの操作ができます。
+
+TODO: SSHエージェントの転送の設定方法を追記する
 
 鍵を使わない場合、上の「直接ログイン」の方法でログインし、`sudo passwd vscode`でパスワードを設定しておく必要があります。開発環境として使うため、セキュリティ的には望ましくないと思われるので、鍵を使うことをお勧めします。
 
@@ -174,7 +181,32 @@ nix develop # など
 
 ## CI (GitHub Actions)
 
-### Dev ContainerがビルドできるかをCIでテストする
+### `devcontainer/ci`でDev Containerを再利用する
+
+GitHub ActionsでDev Containerを再利用したいときは、[devcontainer/ci](https://github.com/devcontainers/ci/blob/main/docs/github-action.md)アクションを使うと良いでしょう。
+
+```yaml
+name: Dev Container Build Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - name: Run devcontainer build
+      uses: devcontainers/ci@v0.3
+      with:
+        runCmd: yarn test
+```
+
+以上はシンプルな導入例ですが、ドキュメントにはDev Containerのビルドをキャッシュする方法など高度なトピックについても記載されています。
+
+### `devcontainer/ci`を使わずにDev Containerのビルドをテストする
 
 Dev ContainerがビルドできるかをCIでテストすることができます。以下のようなGitHub Actionsの設定ファイルを用意して、リポジトリに配置します。
 
@@ -183,9 +215,9 @@ name: Dev Container Build Check
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   devcontainer-build:
@@ -198,7 +230,7 @@ jobs:
         run: devcontainer build --workspace-folder .
 ```
 
-### CIでDev Containerを用いて何かを行う
+### `devcontainer/ci`を使わずにDev Containerで何かコマンドを実行する
 
 CIでもDev Containerの環境を用いて、テストやビルドなど何らかのタスクを行いたいことがあるかもしれません。
 その場合は、以下のようなGitHub Actionsの設定ファイルを用意して、リポジトリに配置します。
@@ -208,9 +240,9 @@ name: Use Dev Container in CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   devcontainer-build:
@@ -222,6 +254,65 @@ jobs:
       - name: Execute something in Dev Container
         run: devcontainer exec --workspace-folder . echo "Hello, Dev Container!"
 ```
+
+## カスタマイズ
+
+このDev Containerをカスタマイズする方法はいくつかあります。
+
+### `devcontainer.json`
+
+Dev Containerの設定ファイルです。本リポジトリでは扱っていない設定も沢山あります。カスタマイズが必要になったら下記公式ドキュメントを参照してみてください。
+
+- [devcontainer.json reference](https://code.visualstudio.com/docs/remote/devcontainerjson-reference)
+
+### Dev Container Features
+
+Dev Container Featuresは、開発コンテナの機能を拡張するためのモジュラーなコンポーネントです。これらを使用することで、開発者は必要な言語サポート、ツール、設定などを柔軟に追加し、プロジェクト固有の要件に合わせて開発環境をカスタマイズできます。再利用可能で、バージョン管理が可能なため、一貫性のある環境構築を容易にします。
+
+このDev ContainerでもすでにいくつかのFeaturesを利用しています。
+
+利用可能なDev Container Featuresの一覧は以下のURLから確認できます。
+
+https://containers.dev/features
+
+## 起動パフォーマンス
+
+Dev Containerの起動が遅いと、開発体験が悪くなります。そのため、Dev Containerの起動を高速化は重要です。
+
+Dev ContainerはDockerをベースとしているため、起動を高速化するにはDockerビルドの最適化に関する次のような知識が必要です。
+
+- イメージを小さくする
+- レイヤーキャッシュがよく効くようにする (単純にレイヤー数を減らせば速くなるわけではなく、適切に分割することが重要)
+- コンテキストをできるだけ小さくする
+- ボリュームを使う
+
+### イメージサイズを小さくする・レイヤーキャッシュを効かせる
+
+この手の最適化は[`dive`]や`docker diff`などのツールを使って、Dockerイメージのレイヤーを分析する必要があります。
+
+[`dive`]: https://github.com/wagoodman/dive
+
+### コンテキストをできるだけ小さくする
+
+Dockerビルド時にDockerデーモンに転送するファイルが増えると、ビルドが遅くなります。
+Dev Containerを構成する上で不要なファイルがコンテキストに含まれていないかチェックしましょう。
+チェックには[`docker-show-context`]を使うと便利です。不要なファイルが除外されるように、コンテキストを指定する、`.dockerignore`ファイルを適切に設定するなどの対策を行いましょう。
+
+[`docker-show-context`]: https://github.com/pwaller/docker-show-context
+
+### ボリュームを使う
+
+Dev Containerの開発体験はDockerビルドのパフォーマンスだけでなく、IDEの起動にかかる時間や、`yarn install`などの初回セットアップ手順にかかる時間も重要になってきます。
+このDev Containerでは、「ボリュームを使う」アプローチを用いて、初回セットアップ手順の高速化を図っています。
+この最適化はツールがどこにキャッシュや設定ファイルを作るかを理解する必要があります。
+ツールがどこにファイルを作るかを知るには、`docker diff`コマンドを使うと便利です。
+
+```bash
+docker diff <container-id> | sort
+```
+
+これにより見つかったファイルをボリュームにマウントすることで、2回目以降のセットアップ手順の高速化が期待できます。
+ボリュームマウントする方法は、`devcontainer.json`の`mounts`セクションを使うと簡単に設定できますが、このDev Containerでは `docker-compose.yml` を使ってボリュームマウントを設定しています。
 
 ## Q&A
 
