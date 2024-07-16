@@ -220,7 +220,7 @@ jobs:
       - name: Install Dev Container CLI
         run: npm install -g @devcontainers/cli
       - name: Execute something in Dev Container
-				run: devcontainer exec --workspace-folder . echo "Hello, Dev Container!"
+        run: devcontainer exec --workspace-folder . echo "Hello, Dev Container!"
 ```
 
 ## Q&A
