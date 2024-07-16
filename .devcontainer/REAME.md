@@ -172,6 +172,57 @@ nix develop # など
 
 ただし、この方法は開発者個々人がIPアドレスを自由に決める裁量がないため、チーム開発には向いていない可能性があります。開発者ごとに携わっているプロジェクト数が異なる可能性があるためです。このあたりの改善は今後の課題とします。
 
+## CI (GitHub Actions)
+
+### Dev ContainerがビルドできるかをCIでテストする
+
+Dev ContainerがビルドできるかをCIでテストすることができます。以下のようなGitHub Actionsの設定ファイルを用意して、リポジトリに配置します。
+
+```yaml
+name: Dev Container Build Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  devcontainer-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dev Container CLI
+        run: npm install -g @devcontainers/cli
+      - name: Run devcontainer build
+        run: devcontainer build --workspace-folder .
+```
+
+### CIでDev Containerを用いて何かを行う
+
+CIでもDev Containerの環境を用いて、テストやビルドなど何らかのタスクを行いたいことがあるかもしれません。
+その場合は、以下のようなGitHub Actionsの設定ファイルを用意して、リポジトリに配置します。
+
+```yaml
+name: Use Dev Container in CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  devcontainer-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dev Container CLI
+        run: npm install -g @devcontainers/cli
+      - name: Execute something in Dev Container
+				run: devcontainer exec --workspace-folder . echo "Hello, Dev Container!"
+```
+
 ## Q&A
 
 ### `vsc-{project-name}-{checksum}-uid:latest`のようなイメージが作成されるのはなぜですか？
