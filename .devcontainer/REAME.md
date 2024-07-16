@@ -363,3 +363,9 @@ docker diff <container-id> | sort
 ### `vsc-{project-name}-{checksum}-uid:latest`のようなイメージが作成されるのはなぜですか？
 
 Dev Containerの仕様で、設定`updateRemoteUserUID`が有効になっているとき、ホストマシンのユーザーIDに合わせてコンテナ内のユーザーIDを変更します。この変更がイメージとして作られた結果です。
+
+## ベースにした設定
+
+このDev Containerは以下のリポジトリを参考に構成されています。
+
+- https://github.com/suin/devcontainer-starter (MIT LICENSE)
