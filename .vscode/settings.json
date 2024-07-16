@@ -1,0 +1,31 @@
+{
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[nix]": {
+		"editor.defaultFormatter": "jnoortheen.nix-ide"
+	},
+	"eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"linter.linters": {
+		"yamllint": {
+			"enabled": true
+		}
+	},
+	"editor.formatOnSave": true
+}

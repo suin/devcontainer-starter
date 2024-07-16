@@ -4,8 +4,8 @@ services:
       context: workspace
       dockerfile: Dockerfile
       args:
-        HOST_UID: ${HOST_UID} # .envのHOST_UIDを渡す
-        HOST_GID: ${HOST_GID} # .envのHOST_GIDを渡す
+        HOST_UID: "${HOST_UID}" # .envのHOST_UIDを渡す
+        HOST_GID: "${HOST_GID}" # .envのHOST_GIDを渡す
     user: vscode:vscode # マウントしたファイルの所有者がroot:rootにならないようにするため
     volumes:
       - ..:/workspace:cached # ソースコードをホストと共有
@@ -20,7 +20,7 @@ services:
       - nvim:/home/vscode/.local/share/nvim # Neovimの設定をボリュームに残すことで、コンテナを再作成してもNeovimの設定を引き継げるので、Neovimの起動が早くなる
     command: sleep infinity # コンテナが終了しないようにする
     ports:
-      - ${HOST_ADDR}2222:2222 # SSH
+      - "${HOST_ADDR}2222:2222" # SSH
 
 volumes:
   # ホームディレクトリのキャッシュ用のボリューム

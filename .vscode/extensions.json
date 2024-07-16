@@ -1,0 +1,13 @@
+{
+	"recommendations": [
+		"mkhl.direnv",
+		"jnoortheen.nix-ide",
+		"fnando.linter",
+		"github.copilot",
+		"dbaeumer.vscode-eslint",
+		"biomejs.biome",
+		"usernamehw.errorlens",
+		"eamodio.gitlens",
+		"ms-vsliveshare.vsliveshare"
+	]
+}

@@ -200,6 +200,20 @@ nix develop # など
 use flake
 ```
 
+### VS CodeでのNixパッケージの利用
+
+プロジェクトルートの`flake.nix`で指定したパッケージをVS Codeで利用するためには、[direnv拡張]をVS Codeにインストールしてください。
+
+[direnv拡張]: https://marketplace.visualstudio.com/items?itemName=mkhl.direnv
+
+プロジェクトルートに`.envrc`を作り、次の内容を書いておいてください。
+
+```bash
+use flake
+```
+
+この状態でVS Codeを開くと、direnv allowを求められます。許可するとNixのパッケージにパスが通るので、VS Codeの各種拡張からNixで導入したツールが利用できるようになります。許可してもうまくパスが通っていないようであれば、VS Codeを再起動してみてください。
+
 ## 複数のプロジェクトを同時に起動したいとき
 
 複数のプロジェクトを同時に起動しようとすると、ポートの競合が発生します。

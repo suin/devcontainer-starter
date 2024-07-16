@@ -1,5 +1,5 @@
 {
-  description = "Integrated development environment with team and personal tools";
+  description = "Toom tools";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -16,11 +16,11 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-          	git
-          	gh
-          	yamllint
-          	biome
-          	nixpkgs-fmt
+            biome
+            gh
+            git
+            nixpkgs-fmt
+            yamllint
           ];
         };
       }

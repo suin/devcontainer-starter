@@ -12,5 +12,20 @@
 		"ghcr.io/devcontainers-contrib/features/direnv:1": {}
 	},
 	"workspaceFolder": "/workspace",
-	"forwardPorts": [2222]
+	"forwardPorts": [2222],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"mkhl.direnv",
+				"jnoortheen.nix-ide",
+				"fnando.linter",
+				"github.copilot",
+				"dbaeumer.vscode-eslint",
+				"biomejs.biome",
+				"usernamehw.errorlens",
+				"eamodio.gitlens",
+				"ms-vsliveshare.vsliveshare"
+			]
+		}
+	}
 }
