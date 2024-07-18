@@ -203,6 +203,8 @@ use flake
 
 ### VS CodeでのNixパッケージの利用
 
+#### envrcによる対応
+
 プロジェクトルートの`flake.nix`で指定したパッケージをVS Codeで利用するためには、[direnv拡張]をVS Codeにインストールしてください。
 
 [direnv拡張]: https://marketplace.visualstudio.com/items?itemName=mkhl.direnv
